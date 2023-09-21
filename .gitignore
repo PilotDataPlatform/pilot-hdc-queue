@@ -1,0 +1,7 @@
+*.log
+*.vscode
+*cache*
+.venv
+
+.env
+logs
