@@ -1,4 +1,4 @@
-FROM python:3.8-buster
+FROM docker-registry.ebrains.eu/hdc-services-image/base-image:python-3.10.12-v2 AS socketio-image
 
 ENV PYTHONDONTWRITEBYTECODE=true \
     PYTHONIOENCODING=UTF-8 \
@@ -8,30 +8,16 @@ ENV PYTHONDONTWRITEBYTECODE=true \
 
 ENV PATH="${POETRY_HOME}/bin:${PATH}"
 
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone && \
-    apt-get update && \
-    apt-get install -y vim-tiny less && \
-    ln -s /usr/bin/vim.tiny /usr/bin/vim && \
-    rm -rf /var/lib/apt/lists/*
-RUN groupadd --gid 1004 deploy && \
-    useradd --home-dir /home/deploy \
-    --create-home \
-    --uid 1004 \
-    --gid 1004 \
-    --shell /bin/sh \
-    --skel /dev/null deploy
-
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
-WORKDIR /home/deploy
-
-RUN chown -R deploy:deploy /home/deploy
-ENV PATH="/home/deploy/.local/bin:${PATH}"
+ENV PATH="/app/.local/bin:${PATH}"
 # RUN chmod +x /home/deploy/gunicorn_starter.sh
-COPY .  ./
+COPY ./socketio  ./
+
 RUN poetry install --no-dev --no-root --no-interaction
 
-USER deploy
+RUN chown -R app:app /app
+USER app
+
 # CMD ["./gunicorn_starter.sh"]
 CMD poetry run python run.py

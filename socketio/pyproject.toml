@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "service_queue_socketio"
-version = "2.2.0"
+version = "2.2.6"
 description = ""
 authors = ["Indoc Research"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 aio-pika = "^7.2.0"
 aiohttp = "^3.8.1"
 aiormq = "^6.2.3"
@@ -28,8 +28,7 @@ typing-extensions = "^4.2.0"
 yarl = "^1.7.2"
 pydantic = "^1.9.0"
 python-dotenv = "0.19.1"
-python-json-logger = "^2.0.2"
-pilot-platform-common = "^0.0.39"
+pilot-platform-common = "0.3.0"
 pre-commit = "^2.19.0"
 aioredis = "^2.0.1"
 # there was some issue with version compatibility on version

@@ -1,4 +1,4 @@
-FROM python:3.9-buster AS production-environment
+FROM docker-registry.ebrains.eu/hdc-services-image/base-image:python-3.10.12-v2 AS production-environment
 
 ENV PYTHONDONTWRITEBYTECODE=true \
     PYTHONIOENCODING=UTF-8 \
@@ -14,14 +14,15 @@ RUN apt-get update \
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
-WORKDIR /app
-
-COPY poetry.lock pyproject.toml ./
+COPY ./producer/poetry.lock ./producer/pyproject.toml ./
 
 RUN poetry install --no-dev --no-root --no-interaction
 
-FROM production-environment AS queue-image
+FROM production-environment AS producer-image
 
-COPY .  ./
+COPY ./producer  ./
+
+RUN chown -R app:app /app
+USER app
 
 CMD ["python3", "-m", "producer"]

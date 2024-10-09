@@ -1,8 +1,10 @@
-# Copyright (C) 2022-2023 Indoc Systems
+# Copyright (C) 2022-Present Indoc Systems
 #
-# Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE, Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
+# Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE,
+# Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
 # You may not use this file except in compliance with the License.
 
+from common import configure_logging
 from fastapi import FastAPI
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
@@ -34,6 +36,7 @@ def create_app() -> FastAPI:
         redoc_url='/v1/api-redoc',
         version=settings.version,
     )
+    setup_logging(settings)
     setup_routers(app)
     setup_exception_handlers(app)
 
@@ -86,3 +89,9 @@ def setup_tracing(app: FastAPI, settings: Settings) -> None:
     )
 
     tracer_provider.add_span_processor(BatchSpanProcessor(jaeger_exporter))
+
+
+def setup_logging(settings: Settings) -> None:
+    """Configure the application logging."""
+
+    configure_logging(settings.LOGGING_LEVEL, settings.LOGGING_FORMAT)

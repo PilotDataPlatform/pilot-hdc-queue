@@ -1,20 +1,20 @@
-# Copyright (C) 2022-2023 Indoc Systems
+# Copyright (C) 2022-Present Indoc Systems
 #
-# Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE, Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
+# Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE,
+# Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
 # You may not use this file except in compliance with the License.
 
 import time
 
-from common import LoggerFactory
 from fastapi import APIRouter
 
 from producer.components.broker.schemas import PublishBrokerRequestSchema
 from producer.components.broker.schemas import PublishBrokerResponseSchema
 from producer.components.schemas import EAPIResponseCode
+from producer.logger import logger
 
 from .publish import do_publish
 
-logger = LoggerFactory('pipeline_publisher').get_logger()
 router = APIRouter(prefix='/broker', tags=['Message Broker Service'])
 
 

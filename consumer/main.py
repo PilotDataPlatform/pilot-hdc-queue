@@ -1,15 +1,17 @@
-# Copyright (C) 2022-2023 Indoc Systems
+# Copyright (C) 2022-Present Indoc Systems
 #
-# Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE, Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
+# Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE,
+# Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
 # You may not use this file except in compliance with the License.
 
 import json
 import os
 import time
 
-from common import LoggerFactory
+from common import configure_logging
 from config import ConfigClass
 from config import get_settings
+from logger import logger
 from opentelemetry import trace
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.instrumentation.pika import PikaInstrumentor
@@ -22,8 +24,6 @@ from pipelines.data_copy import folder_copy_pipeline
 from pipelines.data_delete import folder_delete_pipeline
 
 from consumer import QueueConsumer
-
-logger = LoggerFactory('pipeline_message_consumer').get_logger()
 
 
 def millis():
@@ -145,6 +145,13 @@ def instrument_app() -> None:
     tracer_provider.add_span_processor(BatchSpanProcessor(jaeger_exporter))
 
 
+def setup_logging(settings: ConfigClass) -> None:
+    """Configure the application logging."""
+
+    configure_logging(settings.LOGGING_LEVEL, settings.LOGGING_FORMAT)
+
+
 if __name__ == '__main__':
+    setup_logging(ConfigClass)
     instrument_app()
     main()

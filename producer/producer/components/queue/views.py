@@ -1,18 +1,18 @@
-# Copyright (C) 2022-2023 Indoc Systems
+# Copyright (C) 2022-Present Indoc Systems
 #
-# Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE, Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
+# Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE,
+# Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
 # You may not use this file except in compliance with the License.
 
-from common import LoggerFactory
 from fastapi import APIRouter
 
 from producer.components.queue.schemas import SendMessageRequestSchema
 from producer.components.queue.schemas import SendMessageResponseSchema
 from producer.components.schemas import EAPIResponseCode
+from producer.logger import logger
 
 from .models import trigger_event
 
-logger = LoggerFactory('pipeline_publisher').get_logger()
 router = APIRouter(tags=['Send Message Service'])
 
 

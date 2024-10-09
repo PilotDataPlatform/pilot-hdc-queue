@@ -1,19 +1,20 @@
-# Copyright (C) 2022-2023 Indoc Systems
+# Copyright (C) 2022-Present Indoc Systems
 #
-# Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE, Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
+# Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE,
+# Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
 # You may not use this file except in compliance with the License.
 
 import asyncio
 import json
 
 from aiohttp import web
-from common import LoggerFactory
+from common import configure_logging
 from config import ConfigClass
 from message_queue import MessageQueue
-
+from logger import logger
 import socketio
 
-logger = LoggerFactory('socketio').get_logger()
+configure_logging(ConfigClass.LOGGING_LEVEL, ConfigClass.LOGGING_FORMAT)
 
 sio = socketio.AsyncServer(cors_allowed_origins='*', engineio_logger=True, logger=True)
 app = web.Application()

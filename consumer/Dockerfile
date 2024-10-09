@@ -1,4 +1,4 @@
-FROM python:3.9-buster
+FROM docker-registry.ebrains.eu/hdc-services-image/base-image:python-3.10.12-v2 AS consumer-image
 
 ENV PYTHONDONTWRITEBYTECODE=true \
     PYTHONIOENCODING=UTF-8 \
@@ -10,12 +10,13 @@ ENV PATH="${POETRY_HOME}/bin:${PATH}"
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
-ENV PATH="/home/deploy/.local/bin:${PATH}"
+ENV PATH="/app/.local/bin:${PATH}"
 
-WORKDIR /home/deploy
-
-COPY poetry.lock pyproject.toml ./
+COPY ./consumer/poetry.lock ./consumer/pyproject.toml ./
 RUN poetry install --no-dev --no-root --no-interaction
-COPY . .
+COPY ./consumer .
+
+RUN chown -R app:app /app
+USER app
 
 CMD ["python3", "./main.py"]
