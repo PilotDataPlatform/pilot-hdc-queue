@@ -40,7 +40,7 @@ def share_dataset_version_pipeline(
         api_client = KubernetesApiClient()
         job_api_client = api_client.create_batch_api_client()
         job = api_client.share_dataset_version_job_obj(
-            'bids-validate-' + str(round(time.time() * 10000)),
+            'share-dataset-version-' + str(round(time.time() * 10000)),
             ConfigClass.data_transfer_image,
             volume_path,
             command,
