@@ -4,8 +4,6 @@
 # Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
 # You may not use this file except in compliance with the License.
 
-from typing import Optional
-
 from producer.components.exceptions import ServiceNotAvailable
 from producer.components.schemas import BasePayload
 from producer.config import ConfigClass
@@ -14,7 +12,7 @@ from producer.resources.queuePublisher import MessagePublish
 
 
 class BasedProducer:
-    def __init__(self, event_type: str, project: Optional[str], create_time: float, payload: BasePayload):
+    def __init__(self, event_type: str, project: str | None, create_time: float, payload: BasePayload):
         self.event_type = event_type
         self.project = project
         self.create_time = create_time

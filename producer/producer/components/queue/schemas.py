@@ -5,8 +5,6 @@
 # You may not use this file except in compliance with the License.
 
 from enum import Enum
-from typing import Dict
-from typing import Optional
 
 from pydantic import BaseModel
 from pydantic import root_validator
@@ -20,6 +18,7 @@ class Event(Enum):
     bids_validate = 'bids_validate'
     folder_copy = 'folder_copy'
     folder_delete = 'folder_delete'
+    share_dataset_version = 'share_dataset_version'
 
 
 class SendMessageRequestSchema(BaseSchema):
@@ -35,6 +34,7 @@ class SendMessageRequestSchema(BaseSchema):
             'bids_validate': BidsPayload,
             'folder_copy': CopyPayload,
             'folder_delete': DeletePayload,
+            'share_dataset_version': ShareDatasetVersion,
         }.get(value['event_type'])
         try:
             event_map(**value['payload'])
@@ -61,9 +61,9 @@ class CopyPayload(BasePayload):
     source_geid: str
     include_geids: list
     project: str
-    generic: Optional[str]
+    generic: str | None
     operator: str
-    request_info: Optional[Dict]
+    request_info: dict | None
     destination_geid: str
     access_token: str
 
@@ -74,6 +74,15 @@ class DeletePayload(BasePayload):
     source_geid: str
     include_geids: list
     project: str
-    generic: Optional[str]
+    generic: str | None
+    operator: str
+    access_token: str
+
+
+class ShareDatasetVersion(BasePayload):
+    version_id: str
+    destination_project_code: str
+    job_id: str
+    session_id: str
     operator: str
     access_token: str

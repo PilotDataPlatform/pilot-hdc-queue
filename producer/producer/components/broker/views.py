@@ -33,7 +33,7 @@ def publish_broker(data: PublishBrokerRequestSchema):
     for field in required:
         if field not in exchange:
             res.code = EAPIResponseCode.bad_request
-            res.error_msg = "param '{}' is required in exchange object.".format(field)
+            res.error_msg = f"param '{field}' is required in exchange object."
             return res.json_response()
 
     create_timestamp = event.get('create_timestamp', time.time())

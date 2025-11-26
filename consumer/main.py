@@ -22,6 +22,7 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from pipelines.bids_validate import bids_validate_pipeline
 from pipelines.data_copy import folder_copy_pipeline
 from pipelines.data_delete import folder_delete_pipeline
+from pipelines.share_dataset_version import share_dataset_version_pipeline
 
 from consumer import QueueConsumer
 
@@ -47,6 +48,30 @@ def bids_validator(ch, method, message):
 
     except Exception as e:
         logger.exception(f'Error occurred while validate bids dataset. {e}')
+        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+
+
+def share_dataset_version(ch, method, message):
+    try:
+        logger.info(f'share_dataset_version message has been received: {message}')
+        version_id = message['version_id']
+        destination_project_code = message['destination_project_code']
+        job_id = message['job_id']
+        session_id = message['session_id']
+        operator = message['operator']
+        access_token = message['access_token']
+        try:
+            share_dataset_version_pipeline(
+                logger, version_id, destination_project_code, job_id, session_id, operator, access_token
+            )
+            logger.info('share_dataset_version pipeline is processing')
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+        except Exception as e:
+            logger.exception(f'Error occurred during share_dataset_version pipeline. {e}')
+            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+
+    except Exception as e:
+        logger.exception(f'Error occurred during share_dataset_version pipeline. {e}')
         ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
 
 
@@ -94,16 +119,21 @@ def folder_delete(ch, method, message):
 def callback(ch, method, properties, body):
     """Received message and start to consume message."""
 
-    logger.info(f'[x] Received {body!r}')
+    logger.info(f'[x] Received {method} {body!r}')
     message = json.loads(body)
 
-    if method.routing_key.split('.')[-1] == 'bids_validate':
+    name = method.routing_key.split('.')[-1]
+
+    if name == 'bids_validate':
         bids_validator(ch, method, message)
 
-    elif method.routing_key.split('.')[-1] == 'folder_copy':
+    elif name == 'share_dataset_version':
+        share_dataset_version(ch, method, message)
+
+    elif name == 'folder_copy':
         folder_copy(ch, method, message)
 
-    elif method.routing_key.split('.')[-1] == 'folder_delete':
+    elif name == 'folder_delete':
         folder_delete(ch, method, message)
 
     else:

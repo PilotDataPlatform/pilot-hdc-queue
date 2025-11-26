@@ -5,35 +5,17 @@
 # You may not use this file except in compliance with the License.
 
 import logging
-import os
 from functools import lru_cache
-from typing import Any
-from typing import Dict
 
-from common import VaultClient
-from dotenv import load_dotenv
 from pydantic import BaseSettings
 from pydantic import Extra
-
-# load env var from local env file
-load_dotenv()
-SRV_NAMESPACE = os.environ.get('APP_NAME', 'service_queue')
-CONFIG_CENTER_ENABLED = os.environ.get('CONFIG_CENTER_ENABLED', 'false')
-
-
-def load_vault_settings(settings: BaseSettings) -> Dict[str, Any]:
-    if CONFIG_CENTER_ENABLED == 'false':
-        return {}
-    else:
-        vc = VaultClient(os.getenv('VAULT_URL'), os.getenv('VAULT_CRT'), os.getenv('VAULT_TOKEN'))
-        return vc.get_from_vault(SRV_NAMESPACE)
 
 
 class Settings(BaseSettings):
     """Store service configuration settings."""
 
     APP_NAME: str = 'service_queue'
-    version: str = '2.2.0'
+    version: str = '2.2.13'
     port: int = 6060
     host: str = '0.0.0.0'
     env: str = 'test'
@@ -59,10 +41,6 @@ class Settings(BaseSettings):
         env_file = '.env'
         env_file_encoding = 'utf-8'
         extra = Extra.allow
-
-        @classmethod
-        def customise_sources(cls, init_settings, env_settings, file_secret_settings):
-            return env_settings, load_vault_settings, init_settings, file_secret_settings
 
 
 @lru_cache(1)

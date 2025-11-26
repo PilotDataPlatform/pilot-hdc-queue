@@ -4,8 +4,6 @@
 # Version 3.0 (the "License") available at https://www.gnu.org/licenses/agpl-3.0.en.html.
 # You may not use this file except in compliance with the License.
 
-from typing import Optional
-
 from pydantic import Field
 
 from producer.components.schemas import APIResponse
@@ -19,9 +17,9 @@ class PublishBrokerRequestSchema(BaseSchema):
     routing_key: str
     event_type: str
     payload: dict = {}
-    exchange: Optional[dict] = None
-    create_timestamp: Optional[float] = None
-    binary: Optional[bool] = False
+    exchange: dict | None = None
+    create_timestamp: float | None = None
+    binary: bool | None = False
 
 
 class PublishBrokerResponseSchema(APIResponse):

@@ -6,8 +6,6 @@
 
 import time
 from typing import Any
-from typing import Dict
-from typing import List
 
 from config import ConfigClass
 from job import KubernetesApiClient
@@ -15,7 +13,7 @@ from kubernetes.client.rest import ApiException
 
 
 def folder_delete_pipeline(
-    logger, source_id: str, project_code: str, include_ids: List[str], event_payload: Dict[str, Any], access_token: str
+    logger, source_id: str, project_code: str, include_ids: list[str], event_payload: dict[str, Any], access_token: str
 ):
     volume_path = ConfigClass.data_lake
     command = ['python3', '-m', 'operations', 'delete']
