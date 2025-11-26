@@ -1,0 +1,47 @@
+name: HDC ci/cd pipeline consumer
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'consumer/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'consumer/**'
+
+jobs:
+  run_tests_hdc:
+    uses: PilotDataPlatform/pilot-hdc-ci-tools/.github/workflows/run_tests.yml@main
+    with:
+      min_coverage_percent: 0
+      coverage_target: 'consumer'
+      poetry_directory: 'consumer'
+      pytest_directory: 'consumer'
+    secrets: inherit
+
+  build_and_publish_hdc:
+    needs: [run_tests_hdc]
+    uses: PilotDataPlatform/pilot-hdc-ci-tools/.github/workflows/build_and_publish.yml@main
+    with:
+      matrix_config: '["consumer"]'
+      service_name: 'consumer'
+      path_to_dockerfile: './consumer/Dockerfile'
+      path_to_pyproject: './consumer/pyproject.toml'
+      registry_subpath: 'queue'
+    secrets: inherit
+
+  deploy_hdc:
+    needs: [build_and_publish_hdc]
+    uses: PilotDataPlatform/pilot-hdc-ci-tools/.github/workflows/trigger_deployment.yml@main
+    with:
+      hdc_service_name: 'queue-consumer'
+      pyproject_folder: 'consumer'
+    secrets: inherit

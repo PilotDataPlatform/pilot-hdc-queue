@@ -7,9 +7,6 @@
 import json
 import time
 from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
 
 from config import ConfigClass
 from job import KubernetesApiClient
@@ -21,9 +18,9 @@ def folder_copy_pipeline(
     source_id: str,
     destination_id: str,
     project_code: str,
-    request_info: Optional[dict],
-    include_ids: List[str],
-    event_payload: Dict[str, Any],
+    request_info: dict | None,
+    include_ids: list[str],
+    event_payload: dict[str, Any],
     access_token: str,
 ):
     volume_path = ConfigClass.data_lake

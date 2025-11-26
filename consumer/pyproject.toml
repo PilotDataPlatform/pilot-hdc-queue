@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "service_queue_consumer"
-version = "2.2.7"
+version = "2.2.13"
 description = ""
 authors = ["Indoc Research"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.11"
 aniso8601 = "8.0.0"
 astroid = "2.4.2"
 attrs = "19.3.0"
@@ -45,7 +45,7 @@ Werkzeug = "1.0.1"
 zipp = "3.1.0"
 dnspython = "2.0.0"
 python-dotenv = "0.19.1"
-pydantic = "1.8.2"
+pydantic = "1.10.19"
 opentelemetry-exporter-jaeger = "1.6.2"
 opentelemetry-instrumentation = "0.26b1"
 opentelemetry-instrumentation-pika = "0.26b1"

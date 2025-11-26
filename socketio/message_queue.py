@@ -58,7 +58,7 @@ class MessageQueue:
         """
 
         self.connection = await aio_pika.connect_robust(
-            '%s%s:%s@%s/' % (self.queue_prefix, self.username, self.password, self.url), loop=self.event_loop
+            f'{self.queue_prefix}{self.username}:{self.password}@{self.url}/', loop=self.event_loop
         )
 
         self.channel = await self.connection.channel()

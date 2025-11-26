@@ -11,32 +11,47 @@ from job import KubernetesApiClient
 from kubernetes.client.rest import ApiException
 
 
-def bids_validate_pipeline(logger, dataset_code, access_token):
+def share_dataset_version_pipeline(
+    logger,
+    version_id: str,
+    destination_project_code: str,
+    job_id: str,
+    session_id: str,
+    operator: str,
+    access_token: str,
+):
     volume_path = ConfigClass.data_lake
-    command = ['python3', '-m', 'operations', 'validate-dataset']
+    command = ['python3', '-m', 'operations', 'share-dataset-version']
     args = [
-        '-d',
-        dataset_code,
-        '-env',
-        ConfigClass.env,
+        '--version-id',
+        version_id,
+        '--destination-project-code',
+        destination_project_code,
+        '--job-id',
+        job_id,
+        '--session-id',
+        session_id,
+        '--operator',
+        operator,
         '--access-token',
         access_token,
     ]
     try:
         api_client = KubernetesApiClient()
         job_api_client = api_client.create_batch_api_client()
-        job = api_client.bids_validate_job_obj(
+        job = api_client.share_dataset_version_job_obj(
             'bids-validate-' + str(round(time.time() * 10000)),
-            ConfigClass.bids_validate_image,
+            ConfigClass.data_transfer_image,
             volume_path,
             command,
             args,
-            dataset_code,
+            version_id,
+            destination_project_code,
         )
 
         api_response = job_api_client.create_namespaced_job(namespace=ConfigClass.namespace, body=job)
         logger.info(api_response.status)
         return api_response
     except ApiException as e:
-        logger.exception(f'Bids validate failed {e}')
+        logger.exception(f'Share dataset version failed {e}')
         return

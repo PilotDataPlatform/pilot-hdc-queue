@@ -10,8 +10,9 @@ import json
 from aiohttp import web
 from common import configure_logging
 from config import ConfigClass
-from message_queue import MessageQueue
 from logger import logger
+from message_queue import MessageQueue
+
 import socketio
 
 configure_logging(ConfigClass.LOGGING_LEVEL, ConfigClass.LOGGING_FORMAT)

@@ -1,0 +1,47 @@
+name: HDC ci/cd pipeline producer
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'producer/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'producer/**'
+
+jobs:
+  run_tests_hdc:
+    uses: PilotDataPlatform/pilot-hdc-ci-tools/.github/workflows/run_tests.yml@main
+    with:
+      min_coverage_percent: 0
+      coverage_target: 'producer'
+      poetry_directory: 'producer'
+      pytest_directory: 'producer'
+    secrets: inherit
+
+  build_and_publish_hdc:
+    needs: [run_tests_hdc]
+    uses: PilotDataPlatform/pilot-hdc-ci-tools/.github/workflows/build_and_publish.yml@main
+    with:
+      matrix_config: '["producer"]'
+      service_name: 'producer'
+      path_to_dockerfile: './producer/Dockerfile'
+      path_to_pyproject: './producer/pyproject.toml'
+      registry_subpath: 'queue'
+    secrets: inherit
+
+  deploy_hdc:
+    needs: [build_and_publish_hdc]
+    uses: PilotDataPlatform/pilot-hdc-ci-tools/.github/workflows/trigger_deployment.yml@main
+    with:
+      hdc_service_name: 'queue-producer'
+      pyproject_folder: 'producer'
+    secrets: inherit

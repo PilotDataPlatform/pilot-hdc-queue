@@ -31,10 +31,6 @@ class KubernetesApiClient:
         volume_mount = client.V1VolumeMount(mount_path=volume_path, name=ConfigClass.NFS_MOUNT)
 
         env = [
-            client.V1EnvVar(name='CONFIG_CENTER_ENABLED', value=str(ConfigClass.CONFIG_CENTER_ENABLED)),
-            client.V1EnvVar(name='VAULT_URL', value=ConfigClass.VAULT_URL),
-            client.V1EnvVar(name='VAULT_CRT', value=ConfigClass.VAULT_CRT),
-            client.V1EnvVar(name='VAULT_TOKEN', value=ConfigClass.VAULT_TOKEN),
             client.V1EnvVar(name='GREEN_ZONE_LABEL', value=ConfigClass.GREEN_ZONE_LABEL),
             client.V1EnvVar(name='CORE_ZONE_LABEL', value=ConfigClass.CORE_ZONE_LABEL),
             client.V1EnvVar(name='RDS_DBNAME', value=ConfigClass.RDS_DBNAME),
@@ -43,16 +39,20 @@ class KubernetesApiClient:
             client.V1EnvVar(name='S3_HOST', value=ConfigClass.S3_HOST),
             client.V1EnvVar(name='S3_PORT', value=ConfigClass.S3_PORT),
             client.V1EnvVar(name='S3_INTERNAL_HTTPS', value=ConfigClass.S3_INTERNAL_HTTPS),
+            client.V1EnvVar(name='S3_ACCESS_KEY', value=ConfigClass.S3_ACCESS_KEY),
+            client.V1EnvVar(name='S3_SECRET_KEY', value=ConfigClass.S3_SECRET_KEY),
             client.V1EnvVar(name='DATAOPS_SERVICE', value=ConfigClass.DATAOPS_SERVICE),
             client.V1EnvVar(name='PROJECT_SERVICE', value=ConfigClass.PROJECT_SERVICE),
             client.V1EnvVar(name='KAFKA_URL', value=ConfigClass.KAFKA_URL),
             client.V1EnvVar(name='REDIS_HOST', value=ConfigClass.REDIS_HOST),
             client.V1EnvVar(name='REDIS_PORT', value=ConfigClass.REDIS_PORT),
+            client.V1EnvVar(name='REDIS_PASSWORD', value=ConfigClass.REDIS_PASSWORD),
             client.V1EnvVar(name='ATLAS_HOST', value=ConfigClass.ATLAS_HOST),
             client.V1EnvVar(name='ATLAS_PORT', value=ConfigClass.ATLAS_PORT),
             client.V1EnvVar(name='APPROVAL_SERVICE', value=ConfigClass.APPROVAL_SERVICE),
             client.V1EnvVar(name='NOTIFICATION_SERVICE', value=ConfigClass.NOTIFICATION_SERVICE),
             client.V1EnvVar(name='DATASET_SERVICE', value=ConfigClass.DATASET_SERVICE),
+            client.V1EnvVar(name='METADATA_SERVICE', value=ConfigClass.METADATA_SERVICE),
         ]
 
         container = client.V1Container(
@@ -85,6 +85,18 @@ class KubernetesApiClient:
         job = self.create_job(
             job_name, container_image, volume_path, command, args, ConfigClass.bids_validate_pipeline, anno
         )
+
+        return job
+
+    def share_dataset_version_job_obj(
+        self, job_name, container_image, volume_path, command, args, version_id, destination_project_code
+    ):
+        anno = {
+            'version_id': version_id,
+            'destination_project_code': destination_project_code,
+        }
+
+        job = self.create_job(job_name, container_image, volume_path, command, args, ConfigClass.copy_pipeline, anno)
 
         return job
 
