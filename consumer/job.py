@@ -100,6 +100,27 @@ class KubernetesApiClient:
 
         return job
 
+    def copy_to_central_node_job_obj(
+        self,
+        job_name,
+        container_image,
+        volume_path,
+        command,
+        args,
+        file_id,
+        destination_api_url,
+        destination_project_code,
+    ):
+        anno = {
+            'file_id': file_id,
+            'destination_api_url': destination_api_url,
+            'destination_project_code': destination_project_code,
+        }
+
+        job = self.create_job(job_name, container_image, volume_path, command, args, ConfigClass.copy_pipeline, anno)
+
+        return job
+
     def copy_folder_job_obj(self, job_name, container_image, volume_path, command, args, project_code, event_payload):
         anno = {
             'source_geid': args[1],
