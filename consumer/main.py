@@ -36,7 +36,7 @@ def millis():
 
 def bids_validator(ch, method, message):
     try:
-        logger.info(f'bids_validate message has been received: {message}')
+        logger.info('bids_validate message has been received')
         dataset_code = message['dataset_code']
         access_token = message['access_token']
         try:
@@ -54,7 +54,7 @@ def bids_validator(ch, method, message):
 
 def share_dataset_version(ch, method, message):
     try:
-        logger.info(f'share_dataset_version message has been received: {message}')
+        logger.info('share_dataset_version message has been received')
         version_id = message['version_id']
         destination_project_code = message['destination_project_code']
         job_id = message['job_id']
@@ -78,7 +78,7 @@ def share_dataset_version(ch, method, message):
 
 def copy_to_central_node(ch, method, message):
     try:
-        logger.info(f'copy_to_central_node message has been received: {message}')
+        logger.info('copy_to_central_node message has been received')
         job_id = message['job_id']
         session_id = message['session_id']
         file_id = message['file_id']
@@ -112,7 +112,7 @@ def copy_to_central_node(ch, method, message):
 
 def folder_copy(ch, method, message):
     try:
-        logger.info(f'folder_copy message has been received: {message}')
+        logger.info('folder_copy message has been received')
         source_geid = message['source_geid']
         destination_geid = message['destination_geid']
         request_info = message.get('request_info')
@@ -137,7 +137,7 @@ def folder_copy(ch, method, message):
 
 def folder_delete(ch, method, message):
     try:
-        logger.info(f'folder_delete message has been received: {message}')
+        logger.info('folder_delete message has been received')
         source_geid = message['source_geid']
         include_geids = message['include_geids']
         access_token = message['access_token']

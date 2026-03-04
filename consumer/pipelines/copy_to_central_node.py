@@ -62,4 +62,4 @@ def copy_to_central_node_pipeline(
         return api_response
     except ApiException as e:
         logger.exception(f'Copy to central node failed {e}')
-        return
+        raise e
