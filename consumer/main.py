@@ -20,6 +20,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from pipelines.bids_validate import bids_validate_pipeline
+from pipelines.copy_to_central_node import copy_to_central_node_pipeline
 from pipelines.data_copy import folder_copy_pipeline
 from pipelines.data_delete import folder_delete_pipeline
 from pipelines.share_dataset_version import share_dataset_version_pipeline
@@ -35,7 +36,7 @@ def millis():
 
 def bids_validator(ch, method, message):
     try:
-        logger.info(f'bids_validate message has been received: {message}')
+        logger.info('bids_validate message has been received')
         dataset_code = message['dataset_code']
         access_token = message['access_token']
         try:
@@ -53,7 +54,7 @@ def bids_validator(ch, method, message):
 
 def share_dataset_version(ch, method, message):
     try:
-        logger.info(f'share_dataset_version message has been received: {message}')
+        logger.info('share_dataset_version message has been received')
         version_id = message['version_id']
         destination_project_code = message['destination_project_code']
         job_id = message['job_id']
@@ -75,9 +76,43 @@ def share_dataset_version(ch, method, message):
         ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
 
 
+def copy_to_central_node(ch, method, message):
+    try:
+        logger.info('copy_to_central_node message has been received')
+        job_id = message['job_id']
+        session_id = message['session_id']
+        file_id = message['file_id']
+        destination_api_url = message['destination_api_url']
+        destination_project_code = message['destination_project_code']
+        destination_access_token = message['destination_access_token']
+        operator = message['operator']
+        access_token = message['access_token']
+        try:
+            copy_to_central_node_pipeline(
+                logger,
+                file_id,
+                destination_api_url,
+                destination_project_code,
+                destination_access_token,
+                job_id,
+                session_id,
+                operator,
+                access_token,
+            )
+            logger.info('copy_to_central_node pipeline is processing')
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+        except Exception as e:
+            logger.exception(f'Error occurred during copy_to_central_node pipeline. {e}')
+            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+
+    except Exception as e:
+        logger.exception(f'Error occurred during copy_to_central_node pipeline. {e}')
+        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+
+
 def folder_copy(ch, method, message):
     try:
-        logger.info(f'folder_copy message has been received: {message}')
+        logger.info('folder_copy message has been received')
         source_geid = message['source_geid']
         destination_geid = message['destination_geid']
         request_info = message.get('request_info')
@@ -102,7 +137,7 @@ def folder_copy(ch, method, message):
 
 def folder_delete(ch, method, message):
     try:
-        logger.info(f'folder_delete message has been received: {message}')
+        logger.info('folder_delete message has been received')
         source_geid = message['source_geid']
         include_geids = message['include_geids']
         access_token = message['access_token']
@@ -129,6 +164,9 @@ def callback(ch, method, properties, body):
 
     elif name == 'share_dataset_version':
         share_dataset_version(ch, method, message)
+
+    elif name == 'copy_to_central_node':
+        copy_to_central_node(ch, method, message)
 
     elif name == 'folder_copy':
         folder_copy(ch, method, message)

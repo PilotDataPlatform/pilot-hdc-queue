@@ -19,6 +19,7 @@ class Event(Enum):
     folder_copy = 'folder_copy'
     folder_delete = 'folder_delete'
     share_dataset_version = 'share_dataset_version'
+    copy_to_central_node = 'copy_to_central_node'
 
 
 class SendMessageRequestSchema(BaseSchema):
@@ -35,6 +36,7 @@ class SendMessageRequestSchema(BaseSchema):
             'folder_copy': CopyPayload,
             'folder_delete': DeletePayload,
             'share_dataset_version': ShareDatasetVersion,
+            'copy_to_central_node': CopyToCentralNode,
         }.get(value['event_type'])
         try:
             event_map(**value['payload'])
@@ -84,5 +86,16 @@ class ShareDatasetVersion(BasePayload):
     destination_project_code: str
     job_id: str
     session_id: str
+    operator: str
+    access_token: str
+
+
+class CopyToCentralNode(BasePayload):
+    session_id: str
+    job_id: str
+    file_id: str
+    destination_api_url: str
+    destination_project_code: str
+    destination_access_token: str
     operator: str
     access_token: str
