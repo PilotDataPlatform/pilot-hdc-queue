@@ -44,7 +44,7 @@ jobs:
     uses: PilotDataPlatform/pilot-hdc-ci-tools/.github/workflows/update_gitops_versions.yml@main
     with:
       service_key: queue-producer
-      image_tag: ${{ needs.build_and_publish_hdc.outputs.app_version }}
+      image_tag: "producer-${{ needs.build_and_publish_hdc.outputs.app_version }}"
       versions_file: clusters/dev/apps/queue-producer/values.yaml
       yaml_path: '.queue-service.image.tag'
     secrets: inherit

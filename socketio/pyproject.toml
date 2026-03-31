@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "service_queue_socketio"
-version = "2.2.15"
+version = "2.2.16"
 description = ""
 authors = ["Indoc Research"]
 
