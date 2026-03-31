@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "service_queue_producer"
-version = "2.2.14"
+version = "2.2.15"
 description = ""
 authors = ["Indoc Research"]
 
